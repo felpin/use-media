@@ -1,4 +1,4 @@
-import {useState, useEffect, useLayoutEffect} from 'react';
+import {useState, useEffect, useLayoutEffect, useMemo} from 'react';
 import {queryObjectToString, noop} from './utilities';
 import {Effect, MediaQueryObject} from './types';
 
@@ -14,9 +14,12 @@ export const mockMediaQueryList: MediaQueryList = {
 };
 
 const createUseMedia = (effect: Effect) => (
-  rawQuery: string | MediaQueryObject,
-  defaultState = false,
+  rawQuery: string | MediaQueryObject
 ) => {
+  const defaultState = useMemo(() => {
+    return typeof window !== 'undefined' ? window.matchMedia(query).matches : false
+  }, [])
+
   const [state, setState] = useState(defaultState);
   const query = queryObjectToString(rawQuery);
 
